@@ -10,22 +10,24 @@ Copyright (c) 2011 Stephen Holiday. All rights reserved.
 import time
 
 class Experiment():
-    feature_extractor_name = None
     feature_extractor = None
     
-    classifier_name = None
     classifier = None
         
         
-    def __init__(self,name):
-        self.name=name
+    def __init__(self,feature_extractor,classifier):
+        #self.cut_point=cut_point
+        self.feature_extractor = feature_extractor
+        self.classifier = classifier
     
-    def __str__(self):
-        res='Experiment<%s,%s,%s>'%(self.name,self.feature_extractor_name,self.classifier_name)
+    def __repr__(self):
+        res='Experiment<%s,%s>'%(self.feature_extractor.name,self.classifier.name)
+        return res
+    
+    def extract_features(self,documents):
         
-    def extract_features(self):
+        past_set=self.feature_extractor(documents)
         
-        self._extract_features(self)
         
         
     def train(self):

@@ -15,6 +15,9 @@ class Feature_Extractor():
     
     def extract_features(self,documents):
         raise NotImplementedError('Should be implemented by subclass')
+        
+    def __repr__(self):
+           return '%s'%self.name
     
 class Ngrams(Feature_Extractor):
     n=1
@@ -22,16 +25,19 @@ class Ngrams(Feature_Extractor):
     name='Ngrams'
     
     def extract_features(self,documents):
-        
-        feats=list()
-        for document in documents:
-            feats.append(self._extract_document_feats(document))
-            
-        return feats
+        return [(self._extract_document_feats(d), c) for (d,c) in documents]
         
     def _extract_document_feats(self,document):
-        document_words = mkgram.ngrams(document,n) 
+        document_words = mkgram.ngrams(document,self.n) 
         features = {}
         for word in document_words:
             features['%s' % word]=True
         return features
+        
+class Unigrams(Ngrams):
+    name='Unigrams'
+    n=1
+    
+class Bigrams(Ngrams):
+    name='Bigrams'
+    n=2

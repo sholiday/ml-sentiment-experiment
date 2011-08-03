@@ -6,7 +6,9 @@ mkgram.py
 Created by Stephen Holiday on 2011-08-01.
 Copyright (c) 2011 Stephen Holiday. All rights reserved.
 """
+import nltk
 
+@staticmethod
 def ngrams(token_list,n=2):
     tokens=dict()
     
@@ -20,8 +22,12 @@ def ngrams(token_list,n=2):
             tokens[token]=1
         else:
             tokens[token]+=1
+    
     return tokens
 
+@staticmethod
+def ngrams_stopwrods(token_list,n=2):
+    pass
     
 if __name__ == '__main__':
     print ngrams('hey there how are you over there'.split(),3)

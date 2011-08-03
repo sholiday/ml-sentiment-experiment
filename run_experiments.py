@@ -21,12 +21,12 @@ import classifier
 
 def main():
     stats=list()
-    
+    filename='stats.%d.json'%time.time()
     def save_stats():
-        fw=open('stats.json','a')
+        fw=open(filename,'a')
         fw.write('%s\n'%json.dumps(stats))
         
-    feat_extractors=[feature_extractor.Unigrams,feature_extractor.Bigrams]
+    feat_extractors=[feature_extractor.Unigrams,feature_extractor.Bigrams,feature_extractor.Trigrams]
     classifiers=[classifier.NaiveBayes]
 
     all_documents = [(list(movie_reviews.words(fileid)), category) 

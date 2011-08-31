@@ -50,6 +50,10 @@ class Trigrams(Ngrams):
     name='Trigrams'
     n=3
     
+class Quadgrams(Ngrams):
+    name='Quadgrams'
+    n=4
+    
 class Ngrams_stopwords(Ngrams):
     name='Ngrams_stopwords'
     ngrammer=mkgram.ngrams_stopwrods
@@ -65,6 +69,10 @@ class Bigrams_stopwords(Ngrams_stopwords):
 class Trigrams_stopwords(Ngrams_stopwords):
     name='Trigrams_stopwords'
     n=3
+    
+class Quadgrams_stopwords(Ngrams_stopwords):
+    name='Quadgrams_stopwords'
+    n=4
     
     
 class Bigram_Collocation_200(Ngrams):

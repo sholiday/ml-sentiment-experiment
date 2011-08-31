@@ -35,6 +35,24 @@ class NaiveBayes(Classifier):
     
     def test(self,test_set):
         return nltk.classify.accuracy(self.classifier, test_set)
+
+class DecisionTree(Classifier):
+    name='DecisionTree'
+
+    def train(self,train_set):
+        self.classifier = nltk.classify.decisiontree.DecisionTreeClassifier.train(train_set, binary=True)
+
+    def test(self,test_set):
+        return nltk.classify.accuracy(self.classifier, test_set)
+        
+class Maxent(Classifier):
+    name='Maxent'
+
+    def train(self,train_set):
+        self.classifier = nltk.classify.maxent.MaxentClassifier.train(train_set)
+
+    def test(self,test_set):
+        return nltk.classify.accuracy(self.classifier, test_set)
         
         
 class Weka(Classifier):
@@ -43,7 +61,9 @@ class Weka(Classifier):
 
     def train(self,train_set):
         nltk.classify.config_java(bin="/usr/bin/java",options=["-Xmx5g"])
-        nltk.classify.config_weka(classpath='/Applications/MacPorts/Weka.app/Contents/Resources/Java/weka.jar')
+        #classpath='/Applications/MacPorts/Weka.app/Contents/Resources/Java/weka.jar
+        classpath='/Applications/weka-3-6-5.app/Contents/Resources/Java/weka.jar'
+        nltk.classify.config_weka(classpath=classpath)
         
         WekaClassifier._CLASSIFIER_CLASS = {
             'naivebayes': 'weka.classifiers.bayes.NaiveBayes',

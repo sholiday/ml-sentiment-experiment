@@ -21,40 +21,18 @@ import feature_extractor
 import classifier
 
 def main():
-    stats={'feat_extractors':{}}
-    filename='stats.%d'%time.time()
+    filename='stats'
     
-    def save_html():
-        fw=open('%s.html'%filename,'w')
-        page='<html>'
-        
-        run=stats
-        page+='\n<table border="1">\n<tr><th>&nbsp;</th>'
-        for klass in classifiers:
-            page+='<th>%s</th>'%klass.name
-        page+='</tr>\n'
-        
-        for extractor in feat_extractors:
-            extractor=extractor.name
-            page+='\n<tr><td>%s</td>'%extractor
-            
-            for klass in classifiers:
-                accuracy=run['feat_extractors'].get(extractor, {}).get('classifiers', {}).get(klass.name, {}).get('accuracy',None)
-                if accuracy is None:
-                    accuracy=''
-                else:
-                    accuracy='%.2f'%(accuracy*100)
-                page+='<td>%s</td>'%accuracy
-            
-            page+='</tr>'
-        page +='</table>'
-            
-        fw.write(page)
-        fw.close()
     def save_stats():
-        json.dump(stats,open('%s.json'%filename,'a'))
-        save_html()
+        json.dump(stats,open('%s.json'%filename,'w'))
     
+    stats={'feat_extractors':{}}
+    try:
+        stats=json.load(open('%s.json'%filename))
+    except IOError:
+        print 'Creating Stats'
+        stats={'feat_extractors':{}}
+        save_stats()
     CUT_PERCENT=0.8
     
     feat_extractors=[
@@ -70,12 +48,12 @@ def main():
     classifiers=[
         classifier.NaiveBayes,
         #classifier.Maxent,
-        classifier.Weka_naivebayes,
-        classifier.Weka_C45,
-        classifier.Weka_kstar,
-        classifier.Weka_log_regression,
-        classifier.Weka_ripper,
-        classifier.Weka_svm,
+        #classifier.Weka_naivebayes,
+        #classifier.Weka_C45,
+        #classifier.Weka_kstar,
+        #classifier.Weka_log_regression,
+        #classifier.Weka_ripper,
+        #classifier.Weka_svm,
         
     ]
 
@@ -105,7 +83,9 @@ def main():
     for pheat_extractor_name in feat_extractors:
         pheat_extractor=pheat_extractor_name()
         pheat_extractor_name='%s'%pheat_extractor_name.name
-        stats['feat_extractors'][pheat_extractor_name]=dict()
+        
+        if not stats['feat_extractors'].has_key(pheat_extractor_name):
+            stats['feat_extractors'][pheat_extractor_name]=dict()
         
         print ' - Running %s'%pheat_extractor
         
@@ -120,38 +100,43 @@ def main():
         print ' - - Ran %s in %f seconds'%(pheat_extractor,end_time-start_time)
         stats['feat_extractors'][pheat_extractor_name]['time']=end_time-start_time
         
-        
-        stats['feat_extractors'][pheat_extractor_name]['classifiers']=dict()
+        if not stats['feat_extractors'][pheat_extractor_name].has_key('classifiers'):
+            stats['feat_extractors'][pheat_extractor_name]['classifiers']=dict()
         for klassifier_name in classifiers:
-            #try:
-            print ' + Running classifier %s'%klassifier_name
             klassifier=klassifier_name()
             klassifier_name='%s'%klassifier_name.name
-        
-            stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]=dict()
-        
-        
-            print ' + + Training'
-            start_time=time.time()
-            klassifier.train(train_set)
-            end_time=time.time()
-        
-            print ' + + Trained %s in %f seconds'%(klassifier,end_time-start_time)
-            stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['train_time']=end_time-start_time
-        
-            print ' + + Testing'
-            start_time=time.time()
-            accuracy= klassifier.test(test_set)
-            end_time=time.time()
-        
-            print ' + + Tested %s in %f seconds with accuracy %f'%(klassifier,end_time-start_time,accuracy)
-            stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['test_time']=end_time-start_time
-            stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['accuracy']=accuracy
             
-            #except Exception, e:
-            #    print 'Caught Exception %s'%e
+            if stats['feat_extractors'][pheat_extractor_name]['classifiers'].has_key(klassifier_name):
+                print ' + Skipping classifier %s because it was already run'%klassifier_name
             
-            save_stats()
+            else:
+                #try:
+                print ' + Running classifier %s'%klassifier_name
+        
+                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]=dict()
+        
+        
+                print ' + + Training'
+                start_time=time.time()
+                klassifier.train(train_set)
+                end_time=time.time()
+        
+                print ' + + Trained %s in %f seconds'%(klassifier,end_time-start_time)
+                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['train_time']=end_time-start_time
+        
+                print ' + + Testing'
+                start_time=time.time()
+                accuracy= klassifier.test(test_set)
+                end_time=time.time()
+        
+                print ' + + Tested %s in %f seconds with accuracy %f'%(klassifier,end_time-start_time,accuracy)
+                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['test_time']=end_time-start_time
+                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['accuracy']=accuracy
+            
+                #except Exception, e:
+                #    print 'Caught Exception %s'%e
+            
+                save_stats()
         save_stats()
     print stats
 if __name__ == '__main__':

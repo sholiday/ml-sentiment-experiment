@@ -49,18 +49,37 @@ class Maxent(Classifier):
     name='Maxent'
 
     def train(self,train_set):
-        self.classifier = nltk.classify.maxent.MaxentClassifier.train(train_set)
-
-    def test(self,test_set):
-        return nltk.classify.accuracy(self.classifier, test_set)
+        '''self.f= nltk.classify.maxent.BinaryMaxentFeatureEncoding.train(train_set)
         
+        encoded_feat_set=list()
+        for pair in train_set:
+            #print pair
+            encoded=self.f.encode(pair[0],pair[1])
+            #print encoded
+            encoded_feat_set.append((encoded,pair[1]=='pos'))
+            #exit()
+        print 'encoded'
+        self.classifier = nltk.classify.maxent.MaxentClassifier.train(encoded_feat_set)
+        '''
+        self.classifier = nltk.classify.maxent.MaxentClassifier.train(train_set)
+        
+    def test(self,test_set):
+        '''encoded_feat_set=list()
+        for pair in test_set:
+            #print pair
+            encoded=self.f.encode(pair[0],pair[1])
+            #print encoded
+            encoded_feat_set.append((encoded,pair[1]=='pos'))
+        return nltk.classify.accuracy(self.classifier, encoded_feat_set)
+        '''
+        return nltk.classify.accuracy(self.classifier,test_set)
         
 class Weka(Classifier):
     name='Weka'
     weka_classifier='naivebayes'
 
     def train(self,train_set):
-        nltk.classify.config_java(bin="/usr/bin/java",options=["-Xmx5g"])
+        nltk.classify.config_java(bin="/usr/bin/java",options=["-Xmx15g"])
         #classpath='/Applications/MacPorts/Weka.app/Contents/Resources/Java/weka.jar
         classpath='/Applications/weka-3-6-5.app/Contents/Resources/Java/weka.jar'
         nltk.classify.config_weka(classpath=classpath)

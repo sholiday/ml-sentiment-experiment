@@ -4,7 +4,7 @@
 format_stats.py
 
 Created by Stephen Holiday on 2011-08-31.
-Copyright (c) 2011 __MyCompanyName__. All rights reserved.
+Copyright (c) 2011 Stephen Holiday. All rights reserved.
 """
 
 import sys
@@ -16,25 +16,26 @@ import classifier
 def main():
     
     feat_extractors=[
-        feature_extractor.Unigrams,feature_extractor.Bigrams,feature_extractor.Trigrams,
+        feature_extractor.Unigrams, feature_extractor.Bigrams,
+        feature_extractor.Trigrams, feature_extractor.Quadgrams,
         
-        feature_extractor.Trigram_Collocation_200, feature_extractor.Trigram_Collocation_100,
-        feature_extractor.Trigram_Collocation_300, feature_extractor.Trigram_Collocation_400,
+        feature_extractor.Trigram_Collocation_200,
+        feature_extractor.Trigram_Collocation_100,
+        feature_extractor.Trigram_Collocation_300,
+        feature_extractor.Trigram_Collocation_400,
         
-        feature_extractor.Bigram_Collocation_200,feature_extractor.Bigram_Collocation_100,
-        feature_extractor.Bigram_Collocation_300,feature_extractor.Bigram_Collocation_400,
-        feature_extractor.Unigrams_stopwords, feature_extractor.Bigrams_stopwords, feature_extractor.Trigrams_stopwords,
+        feature_extractor.Bigram_Collocation_200,
+        feature_extractor.Bigram_Collocation_100,
+        feature_extractor.Bigram_Collocation_300,
+        feature_extractor.Bigram_Collocation_400,
+                     
+        feature_extractor.Unigrams_stopwords,
+        feature_extractor.Bigrams_stopwords,
+        feature_extractor.Trigrams_stopwords,
+        feature_extractor.Quadgrams_stopwords,
         ]
     classifiers=[
         classifier.NaiveBayes,
-        #classifier.Maxent,
-        classifier.Weka_naivebayes,
-        classifier.Weka_C45,
-        classifier.Weka_kstar,
-        classifier.Weka_log_regression,
-        classifier.Weka_ripper,
-        classifier.Weka_svm,
-        
     ]
     
     filename='stats'
@@ -76,7 +77,10 @@ def main():
         page+='\n<tr><td>%s</td>'%extractor
         
         for klass in classifiers:
-            test_time=stats['feat_extractors'].get(extractor, {}).get('classifiers', {}).get(klass.name, {}).get('test_time',None)
+            test_time=stats['feat_extractors'].get(extractor, {})
+                .get('classifiers', {}).get(klass.name, {})
+                .get('test_time',None)
+        
             if test_time is None:
                 test_time=''
             else:

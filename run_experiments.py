@@ -16,7 +16,6 @@ import collections
 
 from nltk.corpus import movie_reviews
 
-from experiment import Experiment
 import feature_extractor
 import classifier
 
@@ -36,7 +35,7 @@ def main():
     CUT_PERCENT=0.8
     
     feat_extractors=[
-        feature_extractor.Unigrams,feature_extractor.Bigrams,feature_extractor.Trigrams,
+        feature_extractor.Unigrams,feature_extractor.Bigrams,feature_extractor.Trigrams,feature_extractor.Quadgrams,
         
         feature_extractor.Trigram_Collocation_200, feature_extractor.Trigram_Collocation_100,
         feature_extractor.Trigram_Collocation_300, feature_extractor.Trigram_Collocation_400,
@@ -44,13 +43,14 @@ def main():
         feature_extractor.Bigram_Collocation_200,feature_extractor.Bigram_Collocation_100,
         feature_extractor.Bigram_Collocation_300,feature_extractor.Bigram_Collocation_400,
         feature_extractor.Unigrams_stopwords, feature_extractor.Bigrams_stopwords, feature_extractor.Trigrams_stopwords,
+        feature_extractor.Quadgrams_stopwords,
         ]
     classifiers=[
         classifier.NaiveBayes,
-        #classifier.Maxent,
+        classifier.Maxent,
         #classifier.Weka_naivebayes,
         #classifier.Weka_C45,
-        #classifier.Weka_kstar,
+        ##classifier.Weka_kstar,
         #classifier.Weka_log_regression,
         #classifier.Weka_ripper,
         #classifier.Weka_svm,
@@ -110,35 +110,35 @@ def main():
                 print ' + Skipping classifier %s because it was already run'%klassifier_name
             
             else:
-                #try:
-                print ' + Running classifier %s'%klassifier_name
+                try:
+                    print ' + Running classifier %s'%klassifier_name
         
-                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]=dict()
+                    stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]=dict()
         
         
-                print ' + + Training'
-                start_time=time.time()
-                klassifier.train(train_set)
-                end_time=time.time()
+                    print ' + + Training'
+                    start_time=time.time()
+                    klassifier.train(train_set)
+                    end_time=time.time()
         
-                print ' + + Trained %s in %f seconds'%(klassifier,end_time-start_time)
-                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['train_time']=end_time-start_time
+                    print ' + + Trained %s in %f seconds'%(klassifier,end_time-start_time)
+                    stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['train_time']=end_time-start_time
         
-                print ' + + Testing'
-                start_time=time.time()
-                accuracy= klassifier.test(test_set)
-                end_time=time.time()
+                    print ' + + Testing'
+                    start_time=time.time()
+                    accuracy= klassifier.test(test_set)
+                    end_time=time.time()
         
-                print ' + + Tested %s in %f seconds with accuracy %f'%(klassifier,end_time-start_time,accuracy)
-                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['test_time']=end_time-start_time
-                stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['accuracy']=accuracy
+                    print ' + + Tested %s in %f seconds with accuracy %f'%(klassifier,end_time-start_time,accuracy)
+                    stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['test_time']=end_time-start_time
+                    stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]['accuracy']=accuracy
             
-                #except Exception, e:
-                #    print 'Caught Exception %s'%e
+                except Exception, e:
+                    del stats['feat_extractors'][pheat_extractor_name]['classifiers'][klassifier_name]
+                    print 'Caught Exception %s'%e
             
                 save_stats()
         save_stats()
     print stats
 if __name__ == '__main__':
     main()
-
